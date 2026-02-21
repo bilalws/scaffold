@@ -26,7 +26,7 @@ npm run build
 
 echo "▶ Restarting services..."
 sudo systemctl restart "${PROJECT_NAME}"
-sudo systemctl restart worker1
-sudo systemctl restart worker2
+sudo systemctl restart "${PROJECT_NAME}-worker1"
+sudo systemctl restart "${PROJECT_NAME}-worker2"
 
 echo "✔ Deploy complete."
