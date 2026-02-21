@@ -1,16 +1,19 @@
 [Unit]
-Description=__PROJECT_NAME__ RQ Worker 2 (priority queue)
+Description=__PROJECT_NAME__ RQ Worker 2 (long queue)
 After=network.target redis.service
 
 [Service]
-User=www-data
-Group=www-data
-WorkingDirectory=/var/www/__PROJECT_NAME__/backend
+Type=simple
+User=ubuntu
+WorkingDirectory=/opt/projects/__PROJECT_NAME__/backend
 Environment="DJANGO_SETTINGS_MODULE=config.settings.prod"
-EnvironmentFile=/var/www/__PROJECT_NAME__/.env
-ExecStart=/var/www/__PROJECT_NAME__/backend/.venv/bin/python manage.py rqworker priority \
+EnvironmentFile=/opt/projects/__PROJECT_NAME__/.env
+ExecStart=/opt/projects/__PROJECT_NAME__/backend/.venv/bin/python manage.py rqworker long \
     --worker-ttl 420 \
     --results-ttl 86400
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
 Restart=on-failure
 RestartSec=5s
 

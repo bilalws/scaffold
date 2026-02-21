@@ -3,15 +3,17 @@ Description=__PROJECT_NAME__ Django (Gunicorn)
 After=network.target
 
 [Service]
-User=www-data
-Group=www-data
-WorkingDirectory=/var/www/__PROJECT_NAME__/backend
+Type=notify
+User=ubuntu
+RuntimeDirectory=gunicorn
+WorkingDirectory=/opt/projects/__PROJECT_NAME__/backend
 Environment="DJANGO_SETTINGS_MODULE=config.settings.prod"
-EnvironmentFile=/var/www/__PROJECT_NAME__/.env
-ExecStart=/var/www/__PROJECT_NAME__/backend/.venv/bin/gunicorn \
+EnvironmentFile=/opt/projects/__PROJECT_NAME__/.env
+ExecStart=/opt/projects/__PROJECT_NAME__/backend/.venv/bin/gunicorn \
     -c gunicorn.conf.py \
     config.wsgi:application
 ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
 Restart=on-failure
 RestartSec=5s
 

@@ -5,8 +5,8 @@ djangorestframework
 django-cors-headers
 
 # Database — uncomment what you use
-psycopg2-binary   # PostgreSQL
-# mysqlclient     # MySQL
+# psycopg2-binary   # PostgreSQL
+mysqlclient     # MySQL
 
 # Task Queue
 rq

@@ -1,8 +1,17 @@
 # Cron jobs — install with: crontab -e
 # Replace __PROJECT_NAME__ with your actual project name
 
+# Blockchain Tasking
+* * * * * flock -n /tmp/blockchain_scan.lock /bin/bash /opt/projects/__PROJECT_NAME__/backend/scripts/task_blockchain_scan.sh
+* * * * * sleep 30; flock -n /tmp/blockchain_scan.lock /bin/bash /opt/projects/__PROJECT_NAME__/backend/scripts/task_blockchain_scan.sh
+
+* * * * * flock -n /tmp/task_withdrawal.lock /bin/bash /opt/projects/__PROJECT_NAME__/backend/scripts/task_withdrawal.sh
+* * * * * sleep 30; flock -n /tmp/task_withdrawal.lock /bin/bash /opt/projects/__PROJECT_NAME__/backend/scripts/task_withdrawal.sh
+
+*/10 * * * * /bin/bash /opt/projects/__PROJECT_NAME__/backend/scripts/task_update_network.sh
+
 # Daily DB backup at 2am
-0 2 * * * /bin/bash /var/www/__PROJECT_NAME__/devops/scripts/backup-db.sh >> /var/log/__PROJECT_NAME__-backup.log 2>&1
+0 2 * * * /bin/bash /opt/projects/__PROJECT_NAME__/devops/scripts/backup-db.sh >> /var/log/__PROJECT_NAME__-backup.log 2>&1
 
 # Let's Encrypt auto-renew (certbot handles this, but just in case)
 0 3 * * * certbot renew --quiet

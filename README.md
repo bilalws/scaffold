@@ -86,5 +86,15 @@ make dev
 ## First Deploy
 
 ```bash
-make setup-server DOMAIN=yourdomain.com
+# 1. On server
+sudo mkdir -p /opt/projects
+sudo chown -R ubuntu:ubuntu /opt/projects
+
+# 2. Clone
+cd /opt/projects
+git clone https://deploy-user:token@gitlab.com/bilalws/project.git
+
+# 3. Run setup
+cd project
+bash devops/scripts/setup-server.sh yourdomain.com
 ```

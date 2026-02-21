@@ -2,7 +2,7 @@
 set -e
 
 PROJECT_NAME=$(basename "$(git rev-parse --show-toplevel)")
-source "/var/www/${PROJECT_NAME}/.env"
+source "/opt/projects/${PROJECT_NAME}/.env"
 
 FILE="$1"
 if [ -z "$FILE" ]; then
@@ -13,9 +13,9 @@ fi
 echo "▶ Restoring database from $FILE..."
 
 # PostgreSQL
-gunzip -c "$FILE" | PGPASSWORD="$DB_PASSWORD" psql -U "$DB_USER" -h "$DB_HOST" "$DB_NAME"
+#gunzip -c "$FILE" | PGPASSWORD="$DB_PASSWORD" psql -U "$DB_USER" -h "$DB_HOST" "$DB_NAME"
 
 # MySQL (uncomment if using MySQL instead)
-# gunzip -c "$FILE" | mysql -u "$DB_USER" -p"$DB_PASSWORD" -h "$DB_HOST" "$DB_NAME"
+gunzip -c "$FILE" | mysql -u "$DB_USER" -p"$DB_PASSWORD" -h "$DB_HOST" "$DB_NAME"
 
 echo "✔ Restore complete."

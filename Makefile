@@ -44,6 +44,12 @@ lint-fe:
 deploy:
 	bash devops/scripts/deploy.sh
 
+deploy-be:
+	bash devops/scripts/deploy-backend.sh
+
+deploy-fe:
+	bash devops/scripts/deploy-frontend.sh
+
 backup:
 	bash devops/scripts/backup-db.sh
 
