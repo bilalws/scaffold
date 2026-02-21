@@ -1,0 +1,18 @@
+[Unit]
+Description=__PROJECT_NAME__ RQ Worker 2 (priority queue)
+After=network.target redis.service
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/__PROJECT_NAME__/backend
+Environment="DJANGO_SETTINGS_MODULE=config.settings.prod"
+EnvironmentFile=/var/www/__PROJECT_NAME__/.env
+ExecStart=/var/www/__PROJECT_NAME__/backend/.venv/bin/python manage.py rqworker priority \
+    --worker-ttl 420 \
+    --results-ttl 86400
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

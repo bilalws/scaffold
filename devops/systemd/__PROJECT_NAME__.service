@@ -1,0 +1,19 @@
+[Unit]
+Description=__PROJECT_NAME__ Django (Gunicorn)
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/__PROJECT_NAME__/backend
+Environment="DJANGO_SETTINGS_MODULE=config.settings.prod"
+EnvironmentFile=/var/www/__PROJECT_NAME__/.env
+ExecStart=/var/www/__PROJECT_NAME__/backend/.venv/bin/gunicorn \
+    -c gunicorn.conf.py \
+    config.wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

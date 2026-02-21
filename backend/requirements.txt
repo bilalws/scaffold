@@ -1,0 +1,21 @@
+# Core
+django
+django-environ
+djangorestframework
+django-cors-headers
+
+# Database — uncomment what you use
+psycopg2-binary   # PostgreSQL
+# mysqlclient     # MySQL
+
+# Task Queue
+rq
+rq-scheduler
+django-rq
+redis
+
+# Server
+gunicorn
+
+# Dev
+flake8

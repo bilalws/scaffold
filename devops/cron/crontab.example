@@ -1,0 +1,8 @@
+# Cron jobs — install with: crontab -e
+# Replace __PROJECT_NAME__ with your actual project name
+
+# Daily DB backup at 2am
+0 2 * * * /bin/bash /var/www/__PROJECT_NAME__/devops/scripts/backup-db.sh >> /var/log/__PROJECT_NAME__-backup.log 2>&1
+
+# Let's Encrypt auto-renew (certbot handles this, but just in case)
+0 3 * * * certbot renew --quiet
