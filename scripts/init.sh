@@ -27,8 +27,8 @@ bash scripts/rename.sh
 # ─── 2. Django setup ──────────────────────
 echo -e "${CYAN}▶ Setting up Django backend...${RESET}"
 
-python3 -m venv backend/.venv
-source backend/.venv/bin/activate
+python3 -m venv backend/venv
+source backend/venv/bin/activate
 pip install --quiet django django-environ djangorestframework django-cors-headers django-rq
 
 # Generate Django project — no conflict since config_scaffold/ != config/
