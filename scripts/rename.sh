@@ -18,7 +18,7 @@ echo -e "${BOLD}▶ Renaming project to: ${PROJECT_NAME}${RESET}"
 
 # Replace placeholder in all text files (excluding .git)
 grep -rl "$PLACEHOLDER" . --exclude-dir=.git | while read -r file; do
-    sed -i "s/${PLACEHOLDER}/${PROJECT_NAME}/g" "$file"
+    sed -i.bak "s/${PLACEHOLDER}/${PROJECT_NAME}/g" "$file" && rm -f "${file}.bak"
     echo "  updated: $file"
 done
 

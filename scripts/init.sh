@@ -40,9 +40,9 @@ mv backend/config_scaffold/settings backend/config/settings
 rm -rf backend/config_scaffold
 
 # Point manage.py, wsgi, asgi to settings.dev
-sed -i "s/config.settings/config.settings.dev/" backend/manage.py
-sed -i "s/config.settings/config.settings.dev/" backend/config/wsgi.py
-sed -i "s/config.settings/config.settings.dev/" backend/config/asgi.py
+sed -i.bak "s/config.settings/config.settings.dev/" backend/manage.py && rm -f backend/manage.py.bak
+sed -i.bak "s/config.settings/config.settings.dev/" backend/config/wsgi.py && rm -f backend/config/wsgi.py.bak
+sed -i.bak "s/config.settings/config.settings.dev/" backend/config/asgi.py && rm -f backend/config/asgi.py.bak
 
 deactivate
 echo -e "${GREEN}✔ Django backend ready${RESET}"
