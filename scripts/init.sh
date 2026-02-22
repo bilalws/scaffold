@@ -17,7 +17,7 @@ git remote remove scaffold
 
 echo ""
 echo -e "${BOLD}${CYAN}╔══════════════════════════════════════╗${RESET}"
-echo -e "${BOLD}${CYAN}║      Project Init (Django + Nuxt)    ║${RESET}"
+echo -e "${BOLD}${CYAN}║      Project Init (Django)    ║${RESET}"
 echo -e "${BOLD}${CYAN}╚══════════════════════════════════════╝${RESET}"
 echo ""
 
@@ -48,10 +48,10 @@ deactivate
 echo -e "${GREEN}✔ Django backend ready${RESET}"
 
 # ─── 3. Nuxt setup ────────────────────────
-echo -e "${CYAN}▶ Setting up Nuxt.js frontend...${RESET}"
-npx nuxi@latest init frontend --no-install --git-init false --packageManager npm
-cd frontend && npm install --silent && cd ..
-echo -e "${GREEN}✔ Nuxt.js frontend ready${RESET}"
+# echo -e "${CYAN}▶ Setting up Nuxt.js frontend...${RESET}"
+# npx nuxi@latest init frontend --no-install --git-init false --packageManager npm
+# cd frontend && npm install --silent && cd ..
+# echo -e "${GREEN}✔ Nuxt.js frontend ready${RESET}"
 
 # ─── Done ─────────────────────────────────
 echo ""
