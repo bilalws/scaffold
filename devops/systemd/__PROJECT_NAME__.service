@@ -9,7 +9,7 @@ RuntimeDirectory=gunicorn
 WorkingDirectory=/opt/projects/__PROJECT_NAME__/backend
 Environment="DJANGO_SETTINGS_MODULE=config.settings.prod"
 EnvironmentFile=/opt/projects/__PROJECT_NAME__/.env
-ExecStart=/opt/projects/__PROJECT_NAME__/backend/.venv/bin/gunicorn \
+ExecStart=/opt/projects/__PROJECT_NAME__/backend/venv/bin/gunicorn \
     -c gunicorn.conf.py \
     config.wsgi:application
 ExecReload=/bin/kill -s HUP $MAINPID

@@ -8,7 +8,7 @@ User=ubuntu
 WorkingDirectory=/opt/projects/__PROJECT_NAME__/backend
 Environment="DJANGO_SETTINGS_MODULE=config.settings.prod"
 EnvironmentFile=/opt/projects/__PROJECT_NAME__/.env
-ExecStart=/opt/projects/__PROJECT_NAME__/backend/.venv/bin/python manage.py rqworker default \
+ExecStart=/opt/projects/__PROJECT_NAME__/backend/venv/bin/python manage.py rqworker default \
     --worker-ttl 420 \
     --results-ttl 86400
 ExecReload=/bin/kill -s HUP $MAINPID

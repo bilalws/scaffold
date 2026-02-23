@@ -10,7 +10,7 @@ git pull origin "$BRANCH"
 
 echo "▶ Backend: installing dependencies..."
 cd "${PROJECT_DIR}/backend"
-source .venv/bin/activate
+source venv/bin/activate
 pip install -r requirements.txt --quiet
 
 echo "▶ Backend: running migrations..."
