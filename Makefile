@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 .PHONY: dev backend frontend migrate makemigrations shell collectstatic createsuperuser \
         worker1 worker2 lint-be lint-fe deploy backup restore setup-server
 

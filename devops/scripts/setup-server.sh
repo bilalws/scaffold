@@ -19,12 +19,18 @@ sudo apt-get install -y -qq \
 # sudo apt-get install -y -qq postgresql postgresql-contrib libpq-dev
 sudo apt-get install -y -qq mysql-server default-libmysqlclient-dev
 
-# Node.js LTS
-if ! command -v node &> /dev/null; then
-    echo "▶ Installing Node.js LTS..."
-    curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-    sudo apt-get install -y nodejs
+# Node.js via nvm
+if ! command -v nvm &> /dev/null; then
+    echo "▶ Installing nvm..."
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 fi
+
+echo "▶ Installing Node.js LTS..."
+nvm install --lts
+nvm use --lts
+nvm alias default lts/*
 
 echo "▶ Installing pm2..."
 npm install -g pm2
@@ -48,7 +54,7 @@ echo "▶ Obtaining SSL certificate..."
 sudo certbot --nginx -d "$DOMAIN" --non-interactive --agree-tos -m "admin@${DOMAIN}"
 
 echo "▶ Installing systemd services..."
-sudo cp "${PROJECT_DIR}/devops/systemd/__PROJECT_NAME__.service" "/etc/systemd/system/${PROJECT_NAME}.service"
+sudo cp "${PROJECT_DIR}/devops/systemd/${PROJECT_NAME}.service" "/etc/systemd/system/${PROJECT_NAME}.service"
 sudo cp "${PROJECT_DIR}/devops/systemd/worker1.service" "/etc/systemd/system/${PROJECT_NAME}-worker1.service"
 sudo cp "${PROJECT_DIR}/devops/systemd/worker2.service" "/etc/systemd/system/${PROJECT_NAME}-worker2.service"
 sudo sed -i "s/__PROJECT_NAME__/${PROJECT_NAME}/g" "/etc/systemd/system/${PROJECT_NAME}.service"
@@ -63,9 +69,15 @@ echo ""
 echo "✔ Server setup complete for $DOMAIN"
 echo ""
 echo "  Next steps:"
-echo "  1. cp .env.example .env  →  fill in your values"
-echo "  2. make migrate"
-echo "  3. make createsuperuser"
-echo "  4. make collectstatic"
-echo "  5. sudo systemctl start ${PROJECT_NAME} ${PROJECT_NAME}-worker1 ${PROJECT_NAME}-worker2"
-echo "  6. cd frontend && pm2 start .output/server/index.mjs --name ${PROJECT_NAME}-frontend"
+echo "  1. sudo timedatectl set-timezone Asia/Seoul  ← change if needed"
+echo "  2. sudo ufw allow 80/tcp && sudo ufw allow 443/tcp"
+echo "  3. sudo mysql"
+echo "       CREATE USER 'ubuntu'@'localhost';"
+echo "       GRANT ALL PRIVILEGES ON *.* TO 'ubuntu'@'localhost';"
+echo "       CREATE DATABASE \`${PROJECT_NAME}\` DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;"
+echo "  4. cp .env.example .env  →  fill in your values"
+echo "  5. python3 -m venv backend/venv && pip install -r backend/requirements.txt"
+echo "  6. make migrate && make createsuperuser && make collectstatic"
+echo "  7. sudo systemctl start ${PROJECT_NAME} ${PROJECT_NAME}-worker1 ${PROJECT_NAME}-worker2"
+echo "  8. cd frontend && npm run build"
+echo "  9. pm2 start .output/server/index.mjs --name ${PROJECT_NAME}-frontend"

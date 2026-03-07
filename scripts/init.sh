@@ -17,7 +17,7 @@ git remote remove scaffold
 
 echo ""
 echo -e "${BOLD}${CYAN}╔══════════════════════════════════════╗${RESET}"
-echo -e "${BOLD}${CYAN}║      Project Init (Django)    ║${RESET}"
+echo -e "${BOLD}${CYAN}║        Project Init (Django)         ║${RESET}"
 echo -e "${BOLD}${CYAN}╚══════════════════════════════════════╝${RESET}"
 echo ""
 
@@ -39,6 +39,9 @@ rm backend/config/settings.py
 mv backend/config_scaffold/settings backend/config/settings
 rm -rf backend/config_scaffold
 
+# Move shared_scaffold → shared
+mv backend/shared_scaffold backend/shared
+
 # Point manage.py, wsgi, asgi to settings.dev
 sed -i.bak "s/config.settings/config.settings.dev/" backend/manage.py && rm -f backend/manage.py.bak
 sed -i.bak "s/config.settings/config.settings.dev/" backend/config/wsgi.py && rm -f backend/config/wsgi.py.bak
@@ -46,12 +49,6 @@ sed -i.bak "s/config.settings/config.settings.dev/" backend/config/asgi.py && rm
 
 deactivate
 echo -e "${GREEN}✔ Django backend ready${RESET}"
-
-# ─── 3. Nuxt setup ────────────────────────
-# echo -e "${CYAN}▶ Setting up Nuxt.js frontend...${RESET}"
-# npx nuxi@latest init frontend --no-install --git-init false --packageManager npm
-# cd frontend && npm install --silent && cd ..
-# echo -e "${GREEN}✔ Nuxt.js frontend ready${RESET}"
 
 # ─── Done ─────────────────────────────────
 echo ""
