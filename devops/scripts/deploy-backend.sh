@@ -19,11 +19,6 @@ python manage.py migrate --settings=config.settings.prod
 echo "▶ Backend: collecting static files..."
 python manage.py collectstatic --noinput --settings=config.settings.prod
 
-echo "▶ Frontend: installing & building..."
-cd "${PROJECT_DIR}/frontend"
-npm install --silent
-npm run build
-
 echo "▶ Restarting services..."
 sudo systemctl restart "${PROJECT_NAME}"
 sudo systemctl restart "${PROJECT_NAME}-worker1"

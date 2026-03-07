@@ -1,6 +1,9 @@
 # Env
 .env
 
+# Claude AI
+.claude
+
 # Python
 __pycache__/
 *.pyc
@@ -9,6 +12,7 @@ venv/
 
 # Django runtimes
 backend/runtimes/logs/*.log
+backend/runtimes/logs/*.log*
 backend/runtimes/media/*
 backend/runtimes/static/*
 !backend/runtimes/logs/.gitkeep

@@ -1,12 +1,15 @@
 from pathlib import Path
 import environ
+from datetime import timedelta
 
 env = environ.Env()
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent  # project root
+BACKEND_DIR = Path(__file__).resolve().parent.parent.parent      # backend/
 
 environ.Env.read_env(BASE_DIR / '.env')
 
+ENVIRONMENT = env('ENVIRONMENT', default='development')
 SECRET_KEY = env('SECRET_KEY')
 
 INSTALLED_APPS = [
@@ -19,14 +22,19 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     # third party
     'rest_framework',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
+    'whitenoise',
     'django_rq',
+    'django_htmx',
     # local
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -34,6 +42,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'shared.middleware.ip.IPAddressMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -108,13 +117,15 @@ LANGUAGE_CODE = 'en'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
-LOCALE_PATHS = [BASE_DIR / 'locale']
+LOCALE_PATHS = [BACKEND_DIR / 'locale']
 
 # Static & Media
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'runtimes' / 'media'
-REPORT_DIR = BASE_DIR / 'runtimes' / 'reports'
+STATIC_ROOT = BACKEND_DIR / 'runtimes' / 'static'
+STATICFILES_DIRS = []
+MEDIA_ROOT = BACKEND_DIR / 'runtimes' / 'media'
+REPORT_DIR = BACKEND_DIR / 'runtimes' / 'reports'
 
 ADMIN_LOGIN_URL = '/management/auth/login/'
 LOGIN_REDIRECT_URL = '/management'
@@ -124,13 +135,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Django REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
+    'EXCEPTION_HANDLER': 'shared.exception_handler.base_exception_handler',
+}
+
+# JWT settings
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=2),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
 }
 
 # Redis Cache
@@ -142,17 +160,19 @@ CACHES = {
 }
 
 # RQ Queues
+_REDIS_URL = env('REDIS_URL', default='redis://localhost:6379/0')
+
 RQ_QUEUES = {
     'default': {
-        'USE_REDIS_CACHE': 'default',
+        'URL': _REDIS_URL,
         'DEFAULT_TIMEOUT': 360,
     },
     'priority': {
-        'USE_REDIS_CACHE': 'default',
+        'URL': _REDIS_URL,
         'DEFAULT_TIMEOUT': 360,
     },
     'long': {
-        'USE_REDIS_CACHE': 'default',
+        'URL': _REDIS_URL,
         'DEFAULT_TIMEOUT': 600,
     },
 }
@@ -176,7 +196,7 @@ LOGGING = {
             'when': 'midnight',
             'backupCount': 5,
             'formatter': 'file',
-            'filename': str(BASE_DIR / 'runtimes' / 'logs' / 'info.log'),
+            'filename': str(BACKEND_DIR / 'runtimes' / 'logs' / 'info.log'),
         },
         'debug': {
             'level': 'DEBUG',
@@ -184,7 +204,7 @@ LOGGING = {
             'when': 'midnight',
             'backupCount': 3,
             'formatter': 'file',
-            'filename': str(BASE_DIR / 'runtimes' / 'logs' / 'debug.log'),
+            'filename': str(BACKEND_DIR / 'runtimes' / 'logs' / 'debug.log'),
         },
         'transaction': {
             'level': 'INFO',
@@ -192,25 +212,16 @@ LOGGING = {
             'when': 'midnight',
             'backupCount': 3,
             'formatter': 'file',
-            'filename': str(BASE_DIR / 'runtimes' / 'logs' / 'transaction.log'),
+            'filename': str(BACKEND_DIR / 'runtimes' / 'logs' / 'transaction.log'),
         },
-
-        # 'admin': {
-        #     'level': 'INFO',
-        #     'class': 'logging.handlers.TimedRotatingFileHandler',
-        #     'when': 'midnight',
-        #     'backupCount': 5,
-        #     'formatter': 'file',
-        #     'filename': str(BASE_DIR / 'runtimes' / 'logs' / 'admin.log'),
-        # },
-        # 'reward': {
-        #     'level': 'INFO',
-        #     'class': 'logging.handlers.TimedRotatingFileHandler',
-        #     'when': 'midnight',
-        #     'backupCount': 3,
-        #     'formatter': 'file',
-        #     'filename': str(BASE_DIR / 'runtimes' / 'logs' / 'reward.log'),
-        # },
+        'admin': {
+            'level': 'INFO',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'when': 'midnight',
+            'backupCount': 5,
+            'formatter': 'file',
+            'filename': str(BACKEND_DIR / 'runtimes' / 'logs' / 'admin.log'),
+        },
     },
     'loggers': {
         'info': {
@@ -233,16 +244,10 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
-
-        # 'admin': {
-        #     'handlers': ['admin'],
-        #     'level': 'INFO',
-        #     'propagate': True,
-        # },
-        # 'reward': {
-        #     'handlers': ['reward'],
-        #     'level': 'INFO',
-        #     'propagate': True,
-        # },
+        'admin': {
+            'handlers': ['admin'],
+            'level': 'INFO',
+            'propagate': True,
+        },
     },
 }
